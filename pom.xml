@@ -23,6 +23,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netty.version>4.1.85.Final</netty.version>
         <fastutil.version>8.5.11</fastutil.version>
+        <guava.version>31.1-jre</guava.version>
+        <lombok.version>1.18.24</lombok.version>
     </properties>
 
     <distributionManagement>
