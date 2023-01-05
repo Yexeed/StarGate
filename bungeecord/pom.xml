@@ -30,10 +30,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>network.ycc.waterdog</groupId>
-            <artifactId>waterdog-api</artifactId>
-            <version>1.15-SNAPSHOT</version>
-            <scope>provided</scope>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.16-R0.4</version>
         </dependency>
     </dependencies>
 

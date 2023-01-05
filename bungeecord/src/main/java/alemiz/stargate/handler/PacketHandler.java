@@ -21,10 +21,6 @@ import alemiz.stargate.server.ServerSession;
 import alemiz.stargate.server.handler.ConnectedHandler;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.connection.Server;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PacketHandler extends ConnectedHandler {
 
@@ -50,7 +46,7 @@ public class PacketHandler extends ConnectedHandler {
                 response.getPlayerList().add(player.getName());
             }
 
-            for (ServerInfo serverInfo : this.loader.getProxy().getServersCopy().values()){
+            for (ServerInfo serverInfo : this.loader.getProxy().getServers().values()){
                 response.getServerList().add(serverInfo.getName());
             }
             this.session.sendPacket(response);
@@ -100,7 +96,6 @@ public class PacketHandler extends ConnectedHandler {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean handleServerManage(ServerManagePacket packet) {
         if (packet.getAction() == ServerManagePacket.Action.REMOVE) {
             return this.loader.getProxy().getServers().remove(packet.getServerName()) != null;
@@ -111,14 +106,7 @@ public class PacketHandler extends ConnectedHandler {
             return false;
         }
 
-        ServerInfo serverInfo = this.loader.getProxy().constructServerInfo(
-                packet.getServerName(),
-                packet.getAddress(),
-                "",
-                false,
-                packet.getServerType().equals("bedrock"),
-                "default"
-        );
+        ServerInfo serverInfo = this.loader.getProxy().constructServerInfo(packet.getServerName(), packet.getAddress(), "", false);
         this.loader.getProxy().getServers().put(packet.getServerName(), serverInfo);
         return true;
     }
