@@ -32,5 +32,12 @@ StarGate:
   port: 47007
   maxConnections: 50   
 ```  
+
+## 🧵 Building:
+- Using maven and jdk 17, use the following command
+```
+maven clean install
+```
+  ✔   For waterdog - take .jar file from `waterdogpe/target`
 ## 📋 Special Thanks To:
 Everyone who downloaded this plugin. To persons who inspiraded me to start this plugin. Thanks to You, this project will be updated for a long time
