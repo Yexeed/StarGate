@@ -23,6 +23,8 @@ import alemiz.stargate.utils.ServerLoader;
 import alemiz.stargate.utils.StarGateLogger;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -59,8 +61,15 @@ public class StarGateServer extends Thread {
         this.password = password;
 
         DefaultThreadFactory factory = new DefaultThreadFactory("stargate", true);
-        this.bossLoopGroup = new NioEventLoopGroup(0, factory);
-        this.eventLoopGroup = new NioEventLoopGroup(0, factory);
+        if (Epoll.isAvailable()) {
+            this.bossLoopGroup = new EpollEventLoopGroup(0, factory);
+            this.eventLoopGroup = new EpollEventLoopGroup(0, factory);
+            loader.getStarGateLogger().info("StarGate uses EPOLL for connections!"); //to reach peace in my soul
+        } else {
+            this.bossLoopGroup = new NioEventLoopGroup(0, factory);
+            this.eventLoopGroup = new NioEventLoopGroup(0, factory);
+            loader.getStarGateLogger().warn("StarGate uses NIO (Epoll not available)");
+        }
     }
 
     @Override
