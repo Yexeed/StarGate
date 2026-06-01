@@ -11,3 +11,4 @@ password: "123456789"
 blockSameNames: true
 # Enable debug logger
 debug: true
+allow-epoll: true

@@ -25,6 +25,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -52,16 +53,19 @@ public class StarGateServer extends Thread {
     private final String password;
     private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
+    private final boolean useEpoll;
+
     private ChannelFuture serverFuture;
 
-    public StarGateServer(InetSocketAddress bindAddress, String password, ServerLoader loader){
+    public StarGateServer(InetSocketAddress bindAddress, String password, ServerLoader loader, boolean allowEpoll){
         this.loader = loader;
         this.bindAddress = bindAddress;
         this.protocolCodec = new ProtocolCodec();
         this.password = password;
+        this.useEpoll = allowEpoll && Epoll.isAvailable();
 
         DefaultThreadFactory factory = new DefaultThreadFactory("stargate", true);
-        if (Epoll.isAvailable()) {
+        if (useEpoll) {
             this.bossLoopGroup = new EpollEventLoopGroup(0, factory);
             this.eventLoopGroup = new EpollEventLoopGroup(0, factory);
             loader.getStarGateLogger().info("StarGate uses EPOLL for connections!"); //to reach peace in my soul
@@ -83,11 +87,12 @@ public class StarGateServer extends Thread {
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(this.bossLoopGroup, this.eventLoopGroup);
-            bootstrap.channel(NioServerSocketChannel.class);
+            bootstrap.channel(useEpoll ? EpollServerSocketChannel.class : NioServerSocketChannel.class);
             bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
             bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
             bootstrap.childHandler(new StarGateServerInitializer(this));
 
+            getLogger().info("Bound success");
             this.serverFuture = bootstrap.bind(this.bindAddress);
         }catch (Exception e){
             this.getLogger().error("StarGate can't be bind to "+this.bindAddress, e);

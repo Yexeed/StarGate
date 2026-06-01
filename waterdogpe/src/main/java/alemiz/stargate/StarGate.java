@@ -44,7 +44,7 @@ public class StarGate extends Plugin implements ServerLoader {
         this.checkClientNames = this.getConfig().getBoolean("blockSameNames", true);
 
         InetSocketAddress address = new InetSocketAddress("0.0.0.0", this.getConfig().getInt("serverPort"));
-        this.server = new StarGateServer(address, this.getConfig().getString("password"), this);
+        this.server = new StarGateServer(address, this.getConfig().getString("password"), this, this.getConfig().getBoolean("allow-epoll"));
         this.server.setServerListener(new StarGateServerListener(this));
         this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_INFO_REQUEST_PACKET, ServerInfoRequestPacket.class);
         this.server.getProtocolCodec().registerPacket(StarGatePackets.SERVER_INFO_RESPONSE_PACKET, ServerInfoResponsePacket.class);
